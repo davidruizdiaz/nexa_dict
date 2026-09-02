@@ -24,7 +24,7 @@ Base de datos: `nexa_store_db` · Motor: PostgreSQL · Esquema: `public` · Fech
 
 ## 2. Diagrama de relaciones
 
-```
+```mermaid
 pais ──1:N──> ciudad ──1:N──> cliente ──1:N──> venta ──1:N──> venta_detalle
                                                           N:1──> producto ──N:1──> producto_categoria
 tienda ──1:N──> vendedor ──1:N──> venta                         N:1──> producto_departamento
