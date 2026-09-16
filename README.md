@@ -42,20 +42,93 @@ Base de datos: `nexa_store_db` · Motor: PostgreSQL · Esquema: `public` · Actu
 
 ## 2. Diagrama de relaciones
 
-```
-pais ──1:N──> ciudad ──1:N──> cliente ──1:N──> venta ──1:N──> venta_detalle
-                                                           N:1──> producto ──N:1──> producto_categoria
-tienda ──1:N──> vendedor ──1:N──> venta                         N:1──> producto_departamento
-               tienda ──1:N──> venta                                N:1──> producto_familia
+```mermaid
+erDiagram
+    pais ||--o{ ciudad : "tiene"
+    ciudad ||--o{ cliente : "tiene"
+    cliente ||--o{ venta : "compra"
+    tienda ||--o{ vendedor : "emplea"
+    tienda ||--o{ venta : "genera"
+    vendedor ||--o{ venta : "atiende"
+    venta ||--o{ venta_detalle : "contiene"
+    producto ||--o{ venta_detalle : "se vende"
+    producto_categoria ||--o{ producto : "agrupa"
+    producto_departamento ||--o{ producto_categoria : "contiene"
+    producto_familia ||--o{ producto_departamento : "agrupa"
+
+    pais {
+        bigint id_pais PK
+        text descripcion
+        text territorio
+    }
+    ciudad {
+        bigint id_ciudad PK
+        bigint id_pais FK
+        text nombre
+        text departamento
+    }
+    cliente {
+        bigint id_cliente PK
+        bigint id_ciudad FK
+        text nombre
+        text direccion
+    }
+    tienda {
+        bigint id_tienda PK
+        text descripcion
+    }
+    vendedor {
+        bigint id_vendedor PK
+        bigint id_tienda FK
+        text nombre
+        text apellido
+        integer edad
+        varchar sexo
+    }
+    venta {
+        bigint id_venta PK
+        bigint id_tienda FK
+        bigint id_cliente FK
+        bigint id_vendedor FK
+        date fecha_venta
+        varchar estado
+    }
+    venta_detalle {
+        bigint id_venta_detalle PK
+        bigint id_venta FK
+        bigint id_producto FK
+        integer unidades_vendidas
+        numeric valor_vendido
+    }
+    producto {
+        bigint id_producto PK
+        bigint id_producto_categoria FK
+        text descripcion
+        numeric precio_costo
+    }
+    producto_categoria {
+        bigint id_producto_categoria PK
+        bigint id_producto_departamento FK
+        text descripcion
+    }
+    producto_departamento {
+        bigint id_producto_departamento PK
+        bigint id_producto_familia FK
+        text descripcion
+    }
+    producto_familia {
+        bigint id_producto_familia PK
+        text descripcion
+    }
 ```
 
 ### Jerarquia de producto
 
-```
-producto_familia
-  └── producto_departamento
-        └── producto_categoria
-              └── producto
+```mermaid
+flowchart TD
+    PF[ProductoFamilia] --> PD[ProductoDepartamento]
+    PD --> PC[ProductoCategoria]
+    PC --> P[Producto]
 ```
 
 ---
